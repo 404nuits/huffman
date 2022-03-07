@@ -141,6 +141,6 @@ def size_compare(string):
 
 if __name__ == '__main__':
 
-    s = "Bonjour je m'appelle goulven et je suis homosexuel"
+    s = "aaaaaaaa"
 
     size_compare(s)
