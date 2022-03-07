@@ -24,6 +24,16 @@ class Node:
     def __str__(self):
         return '<'+ str(self.char)+'.'+str(self.left)+'.'+str(self.right)+'>'
 
+    def encode(self, encoding):
+        """Return bit encoding in traversal."""
+        if self.left is None and self.right is None:
+            yield (self.char, encoding)
+        else:
+            for v in self.left.encode(encoding + '0'):
+                yield v
+            for v in self.right.encode(encoding + '1'):
+                yield v
+
 # Frequency count
 def count(string):
     counter = Counter(string)
@@ -61,10 +71,44 @@ def duffman(queue):
     return queue
 
 
+# Record
+def record(queue):
+    root = queue[0]
+    encoding = {}
+    for sym, code in root.encode(''):
+        encoding[sym]=code
+
+    return encoding
+
+
+def encode(encoding, s):
+    """Return bit string for encoding."""
+    bits = ''
+    for _ in s:
+        if not _ in encoding:
+            raise ValueError("'" + _ + "' is not encoded character")
+        bits += encoding[_]
+    return bits
+
+
+def decode(root, bits):
+    """Decode ASCII bit string for simplicity."""
+    node = root
+    s = ''
+    for _ in bits:
+        if _ == '0':
+            node = node.left
+        else:
+            node = node.right
+        if node.char:
+            s += node.char
+            node = root
+    return s
+
 
 if __name__ == '__main__':
 
-    s = "Bonjour je m'appelle ewen"
+    s = "Bonjour je m'appelle goulven et je suis homosexuel"
 
     c = count(s)
 
@@ -72,4 +116,10 @@ if __name__ == '__main__':
 
     d = duffman(q)
 
-    print(list(d)[0])
+    r = record(d)
+
+    e = encode(r, s)
+
+    t = decode(list(d)[0], e)
+
+    print(t)
