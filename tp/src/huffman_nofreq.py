@@ -106,10 +106,7 @@ def decode(root, bits):
     return s
 
 
-if __name__ == '__main__':
-
-    s = "Bonjour je m'appelle goulven et je suis homosexuel"
-
+def compress(s):
     c = count(s)
 
     q = queue(c)
@@ -120,6 +117,30 @@ if __name__ == '__main__':
 
     e = encode(r, s)
 
-    t = decode(list(d)[0], e)
+    return e
 
-    print(t)
+def to_binary(string):
+
+    byte_list = []
+
+    for c in bytearray(string, "utf8"):
+        byte_list.append(bin(c)[2:])
+
+    return "".join(byte_list)
+
+def size_compare(string):
+    
+    compressed = compress(string)
+
+    b_string = to_binary(string)
+
+    print(f"Normal size : {len(b_string)}")
+    print(f"Compressed size : {len(compressed)}")
+
+    return "prout"
+
+if __name__ == '__main__':
+
+    s = "Bonjour je m'appelle goulven et je suis homosexuel"
+
+    size_compare(s)
