@@ -3,8 +3,6 @@
 #####   Codes de Huffman             		      ###
 #####################################################
 
-## ZIZI
-
 from heapq import *
 
 ###  distribution de proba sur les letrres
