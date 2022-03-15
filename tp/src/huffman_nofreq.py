@@ -15,12 +15,16 @@ class Node:
 
     def isLeaf(self):
         return self.left == None and self.right == None
+        
     def isEmpty(self):
         return self == None
+
     def __lt__(self, other):
         return self.frequence < other.frequence
+
     def __gt__(self, other):
         return self.frequence > other.frequence
+
     def __str__(self):
         return '<'+ str(self.char)+'.'+str(self.left)+'.'+str(self.right)+'>'
 
@@ -119,14 +123,6 @@ def compress(s):
 
     return e
 
-def to_binary(string):
-
-    byte_list = []
-
-    for c in bytearray(string, "utf8"):
-        byte_list.append(bin(c)[2:])
-
-    return "".join(byte_list)
 
 def size_compare(string):
     
@@ -141,6 +137,6 @@ def size_compare(string):
 
 if __name__ == '__main__':
 
-    s = "aaaaaaaa"
+    s = "Goulven c'est un connard"
 
     size_compare(s)
