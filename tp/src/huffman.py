@@ -27,7 +27,6 @@ def frequences() :
     return table
 
 F = frequences()
-#print(F)
 
 ###  la classe Arbre
 
@@ -78,7 +77,6 @@ def arbre_huffman(frequences) :
 
 
 ###  Ex.2  construction du code d'Huffamn
-
 def parcours(arbre,prefixe,code) :
 
     if (arbre.estFeuille()):
@@ -97,10 +95,9 @@ def code_huffman(arbre) :
     return code
 
 ###  Ex.3  encodage d'un texte contenu dans un fichier
-
 def toBinary(dico,fichier) :
     encoded = ''
-    with open(fichier,'r') as file:
+    with open(fichier,'r', encoding="utf-8") as file:
         texte = file.read()
         for char in texte:
             if char in dico:
@@ -111,40 +108,35 @@ def toBinary(dico,fichier) :
 
 def encodage(dico, fichier):
     bin_string = toBinary(dico, fichier)
-    print(len(bin_string))
     i = 0
     buffer = bytearray()
     while i < len(bin_string):
         buffer.append(int(bin_string[i:i+8], 2))
         i += 8
 
-
-    #fichier_array = fichier.split('.')
-    #fichier_encoded = ''.join([fichier_array[:-1],'Encoded.',fichier_array[-1]])
-
     fichier_encoded = "leHorlaEncoded.txt"
 
     with open(fichier_encoded, 'bw') as f:
         f.write(buffer)
 
-
-dico = code_huffman(arbre_huffman(F))
-
-
-encodage(dico,'leHorla.txt')
-
 ###  Ex.4  décodage d'un fichier compresse
-
 def toBinString(fichierCompresse) :
 
-    binary_array = []
+    bin_string = ""
 
     with open(fichierCompresse,'rb') as f:
-        bites = f.read()
-    for b in bites:
-        binary_array += bin(b)[2:]
+        bytes = f.read()
     
-    print(''.join(binary_array))
+    for bit in bytes:
+        bit = str(bin(bit)[2:])
+
+        # Add padding bits
+        while len(bit) < 8:
+            bit = "0" + bit
+
+        bin_string += bit
+
+    return bin_string
 
 
 def decodage(arbre, fichierCompresse):
@@ -152,11 +144,22 @@ def decodage(arbre, fichierCompresse):
     decoded = ''
     root = arbre
     for bit in bin_string:
-        while not arbre.estFeuille():
-            pass
-    #TODO : parcourir l'arbre
+        if bit == '1':
+            arbre = arbre.droit
+        elif bit == '0':
+            arbre = arbre.gauche
+        if arbre.estFeuille():
+            decoded += arbre.lettre
+            arbre = root
 
-H = None
+    return decoded
 
-# decode = decodage(H,'leHorlaEncoded.txt')
-# print(decode)
+
+if __name__ == "__main__":
+    H = arbre_huffman(F)
+    dico = code_huffman(H)
+
+    encodage(dico,'leHorla.txt')
+
+    decode = decodage(H,'leHorlaEncoded.txt')
+    print(decode)

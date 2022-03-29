@@ -93,13 +93,13 @@ def encode(table, string):
     return binary
 
 
-def decode(tree, bits_string):
+def decode(tree, bin_string):
 
     node = tree
 
     plain_text = ''
 
-    for bit in bits_string:
+    for bit in bin_string:
 
         if bit == '0':
             node = node.left
@@ -108,13 +108,62 @@ def decode(tree, bits_string):
         else:
             raise ValueError("Not binary string")
         
-        if node.char:
+        if node.is_leaf():
             plain_text += node.char
 
             # End of path, return to root
             node = tree
     
     return plain_text
+
+
+# =============== File / Binary ===============
+
+def write_bits_to_file(file, bin_string):
+    """Transform a binary string into a bytearray and write it to a file
+
+    Args:
+        file (str): Path and name of file to write to
+        bin_string (str): String composed only of 1 and 0s
+    """
+
+    i = 0
+
+    buffer = bytearray()
+
+    # Add byte per byte to buffer
+    while i < len(bin_string):
+        buffer.append(int(bin_string[i:i+8], 2))
+        i += 8
+
+    with open(file, 'bw') as f:
+        f.write(buffer)
+
+def read_bits_from_file(file):
+    """Read binary file to a string of bytes
+
+    Args:
+        file (str): Filename
+
+    Returns:
+        str: String representation of binary file
+    """
+
+    bin_string = ""
+
+    with open(file, 'rb') as f:
+        bytes = f.read()
+
+    for byte in bytes:
+        byte = str(bin(byte)[2:])
+
+        # Add padding bits if necessary
+        while len(byte) < 8:
+            byte = "0" + byte
+
+        bin_string += byte
+
+    return bin_string
 
 
 # =============== Functions for testing ===============

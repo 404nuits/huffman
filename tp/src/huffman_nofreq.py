@@ -5,6 +5,7 @@
 
 from collections import Counter
 from heapq import heapify, heappop, heappush
+from huffman_utils import string_to_binary, write_bits_to_file, read_bits_from_file
 
 class Node:
     def __init__(self, frequence, char=None, left=None, right=None):
@@ -128,7 +129,7 @@ def size_compare(string):
     
     compressed = compress(string)
 
-    b_string = to_binary(string)
+    b_string = string_to_binary(string)
 
     print(f"Normal size : {len(b_string)}")
     print(f"Compressed size : {len(compressed)}")
@@ -139,4 +140,5 @@ if __name__ == '__main__':
 
     s = "Goulven c'est un connard"
 
-    size_compare(s)
+    compressed = compress(s)
+    print(compressed)
