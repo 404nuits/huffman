@@ -50,11 +50,17 @@ class Arbre:
 
 
 ###  Ex.1  construction de l'arbre d'Huffman utilisant la structure de "tas binaire"
-def arbre_huffman(frequences) :
+def arbre_huffman(frequences):
     
     # 1
     tas = [(item[1],) + (item[0],) + (Arbre(item[0]),) for item in frequences.items()]
+
+    # Ajout du NYT au tas avec une proba de 0, pour qu'il soit au plus bas dans l'arbre, et que la proba totale reste à 1
+    nyt = (0,'NYT',Arbre('NYT'))
+    tas.append(nyt)
+
     heapify(tas)
+
 
     # 4
     while len(tas) > 1:
@@ -95,7 +101,22 @@ def code_huffman(arbre) :
     return code
 
 ###  Ex.3  encodage d'un texte contenu dans un fichier
-def toBinary(dico,fichier) :
+def char_to_code_16_bits(char):
+    """
+    Convert a char to its utf-8 code, on 16 bits
+    """
+    code = '0' + bin(ord(char))[2:]
+    while len(code) < 16:
+        code = '0' + code
+    return code
+
+def code_to_char_16_bits(code):
+    """
+    Convert a code to its char
+    """
+    return chr(int(code,2))
+
+def to_binary(dico,fichier) :
     encoded = ''
     with open(fichier,'r', encoding="utf-8") as file:
         texte = file.read()
@@ -103,11 +124,11 @@ def toBinary(dico,fichier) :
             if char in dico:
                 encoded += dico[char]
             else:
-                encoded += dico[' ']
+                encoded += dico['NYT'] + char_to_code_16_bits(char)
     return encoded
 
 def encodage(dico, fichier):
-    bin_string = toBinary(dico, fichier)
+    bin_string = to_binary(dico, fichier)
     i = 0
     buffer = bytearray()
     while i < len(bin_string):
@@ -120,7 +141,7 @@ def encodage(dico, fichier):
         f.write(buffer)
 
 ###  Ex.4  décodage d'un fichier compresse
-def toBinString(fichierCompresse) :
+def to_bin_string(fichierCompresse) :
 
     bin_string = ""
 
@@ -140,20 +161,33 @@ def toBinString(fichierCompresse) :
 
 
 def decodage(arbre, fichierCompresse):
-    bin_string = toBinString(fichierCompresse)
+    bin_string = to_bin_string(fichierCompresse)
     decoded = ''
     root = arbre
-    for bit in bin_string:
+
+    # Create an iterator to skip values whenever we want (useful for NYT handling)
+    iter_string = iter(range(len(bin_string)))
+
+    for i in iter_string:
+        bit = bin_string[i]
         if bit == '1':
             arbre = arbre.droit
         elif bit == '0':
             arbre = arbre.gauche
         if arbre.estFeuille():
-            decoded += arbre.lettre
+            if arbre.lettre == 'NYT':
+
+                char_code = bin_string[i:i+17]
+
+                char = code_to_char_16_bits(char_code)
+                decoded += char
+                [next(iter_string) for _ in range(16)]
+
+            else:
+                decoded += arbre.lettre
             arbre = root
 
     return decoded
-
 
 if __name__ == "__main__":
     H = arbre_huffman(F)

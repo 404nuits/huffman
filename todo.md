@@ -1,4 +1,3 @@
-# TODO
 
 - Inclure l'arbre dans l'encodage dans la V1 de huffman
 - Bien décoder huffman
@@ -7,3 +6,4 @@
 - Remettre tout la V1 dans le meme fichier parce que c'est mieux
     - Nope en fait si possible faire un code réutilisable
 - Rapport
+- changer l'utilisation de la fonction counter par l'utilisation de boucles for (no_freq)
