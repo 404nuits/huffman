@@ -2,111 +2,113 @@
 # Utils functions for Huffman coding / decoding #
 #################################################
 
-from collections import Counter
 from heapq import heapify, heappop, heappush
 
-class Node:
-    def __init__(self, frequency, char=None, left=None, right=None):
-        self.char = char
-        self.frequency = frequency
-        self.left = left
-        self.right = right
 
-    def is_leaf(self):
-        return self.left == None and self.right == None
-    
-    def is_empty(self):
+class Arbre:
+    def __init__(self, lettre, frequence, gauche=None, droit=None):
+
+        self.gauche=gauche
+        self.droit=droit
+        self.lettre=lettre
+        self.frequence=frequence
+
+    def estFeuille(self):
+
+        return self.gauche == None and self.droit == None
+
+    def estVide(self):
+
         return self == None
-    
-    def __lt__(self, other):
-        """Overwrite comparison function to tell to heapq what to compare in Node object
 
-        Args:
-            other (Node): Other node to compare with the current one
-
-        Returns:
-            bool: True if current lower than other, False else
-        """
-        return self.frequency < other.frequency
-    
-    def __gt__(self, other):
-        return self.frequency > other.frequency
-    
     def __str__(self):
-        return '<'+ str(self.char)+'.'+str(self.left)+'.'+str(self.right)+'>'
+        return '<'+ str(self.lettre)+'.'+str(self.gauche)+'.'+str(self.droit)+'>'
+
+    def __gt__(self, other):
+        return self.frequence > other.frequence
+
+    def __lt__(self, other):
+        return self.frequence < other.frequence
 
 
 # =============== Huffman functions ===============
 
-def count(string):
-    counter = Counter(string)
-    return dict(counter)
-
 def get_queue(frequences):
-    queue = []
+    """Generate a heap queue of Nodes, with the sort based on the frequency (cf __gt__ and __lt__ functions of Arbre class)
+
+    Args:
+        frequences (dict): Frequency dictionary, with only couples char -> frequency
+
+    Returns:
+        list: Nodes heap
+    """
+    heap = []
+
     for char in frequences:
-        node = Node(frequences[char], char)
-        queue.append(node)
 
-    heapify(queue)
+        node = Arbre(char, frequences[char])
 
-    return queue
+        heap.append(node)
 
-def huffman(queue):
+    heapify(heap)
+
+    return heap
+
+def huffman_tree(queue):
+    """Generate huffman tree based on heap queue
+    To sort the heap, heapq uses the __gt__ operator, defined in the Arbre class
+
+    Args:
+        queue (list): Heap queue of nodes
+
+    Returns:
+        Arbre: huffman tree
+    """
     while len(queue) > 1:
 
         # Get 2 lowest elements
-        l1 = heappop(queue)
-        l2 = heappop(queue)
+        tree1 = heappop(queue)
+        tree2 = heappop(queue)
 
-        # Create new leaf node
-        n = Node(l1.frequence + l2.frequence)
-        n.left = l1
-        n.right = l2
-        
-        # Add it to queue
-        heappush(queue, n)
+        # Create new node
+        proba = tree1.frequence + tree2.frequence
+        char = tree1.lettre + tree2.lettre
+        node = Arbre(char, proba, tree1, tree2)
 
-    return queue
+        # Add it to the queue
+        heappush(queue, node)
 
+    return queue[0]
 
-# =============== Encoding / Decoding ===============
+def infix_traversal(tree, prefix, code):
+    """Do an infix traversal of a huffman tree, and generate a dict of char -> binary code (str) couples 
 
-def encode(table, string):
+    Args:
+        tree (Arbre): Node of huffman tree
+        prefix (str): Binary string representation of path of char (0 = left, 1 = right)
+        code (dict): Dictionary of binary string path representation for each char
+    """
     
-    binary = ""
+    if (tree.estFeuille()):
+        code[tree.lettre] = prefix
+    else:
+        if tree.gauche != None:
+            infix_traversal(tree.gauche,prefix+'0',code)
+        if tree.droit != None:
+            infix_traversal(tree.droit,prefix+'1',code)
 
-    for c in string:
-        if not c in table:
-            raise ValueError("TO CHANGE")
-        binary += table[c]
-    
-    return binary
+def huffman_code(tree):
+    """Generate huffman dictionary (char -> code) using infix traversal
 
+    Args:
+        tree (Arbre): root node of tree
 
-def decode(tree, bin_string):
-
-    node = tree
-
-    plain_text = ''
-
-    for bit in bin_string:
-
-        if bit == '0':
-            node = node.left
-        elif bit == '1':
-            node = node.right
-        else:
-            raise ValueError("Not binary string")
-        
-        if node.is_leaf():
-            plain_text += node.char
-
-            # End of path, return to root
-            node = tree
-    
-    return plain_text
-
+    Returns:
+        dict: Huffman dictionary
+    """
+    code = {}
+    infix_traversal(tree, '', code)
+    return code
 
 # =============== File / Binary ===============
 
@@ -156,29 +158,32 @@ def read_bits_from_file(file):
 
     return bin_string
 
-
-# =============== Functions for testing ===============
-
-def is_compressed_smaller(string):
-    pass
-
 # =============== String / Binary ===============
 
 def string_bin_to_16_bits(string, padding="0"):
+    """Transform a binary string to a 16 bits binary string, adding leading padding bits
+
+    Args:
+        string (str): Binary string (only 0 and 1) lower than 16 bits (at max 15 bits)
+        padding (str, optional): Padding bit char, can be 0 or 1. Defaults to "0".
+
+    Returns:
+        str: 16 bits string
+    """
     while len(string) < 16:
         string = padding + string
     return string
 
-def string_to_binary(string):
-
-    byte_list = []
-
-    for c in bytearray(string, "utf8"):
-        byte_list.append(bin(c)[2:])
-
-    return "".join(byte_list)
-
 def char_to_code_16_bits(char, padding="0"):
+    """Convert an UTF-8 char to a 16 bits binary string, with selected leading padding
+
+    Args:
+        char (str): char from UTF-8 table
+        padding (str, optional): Padding bit char, can be 0 or 1. Defaults to "0".
+
+    Returns:
+        str: 16 bits binary string
+    """
     code = '0' + bin(ord(char))[2:]
 
     while len(code) < 16:
@@ -186,7 +191,12 @@ def char_to_code_16_bits(char, padding="0"):
     return code
 
 def code_to_char_16_bits(code):
-    """
-    Convert a code to its char
+    """Convert a bin string char code to its char
+
+    Args:
+        code (str): Binary string (1 and 0)
+
+    Returns:
+        str: char from bin string char code
     """
     return chr(int(code,2))
