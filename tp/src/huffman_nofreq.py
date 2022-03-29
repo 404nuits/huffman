@@ -3,10 +3,8 @@
 ####             Sans fréquence             ####
 ################################################
 
-from collections import Counter
 from heapq import heapify, heappop, heappush
-from huffman_utils import string_to_binary, write_bits_to_file, read_bits_from_file
-import pickle
+from huffman_utils import *
 
 class Node:
     def __init__(self, frequence, char=None, left=None, right=None):
@@ -42,8 +40,13 @@ class Node:
 
 # Frequency count
 def count(string):
-    counter = Counter(string)
-    return dict(counter)
+    counts = {}
+    for c in string:
+        if c not in counts:
+            counts[c]=0
+        else:
+            counts[c] += 1
+    return counts
 
 
 # Construction of priority queue
@@ -85,7 +88,7 @@ def record(queue):
     for sym, code in root.encode(''):
         encoding[sym]=code
 
-    return encoding,root
+    return encoding
 
 
 def encode(encoding, s):
@@ -113,12 +116,61 @@ def decode(root, bits):
             node = root
     return s
 
-def treeEncoding(tree):
-    db={}
-    db['tree']=tree
+def parcours(arbre,prefixe,code) :
 
-    dump=pickle.dumps(db, -1)
-    print(dump)
+    if (arbre.isLeaf()):
+        code[arbre.char] = prefixe
+    else:
+        if arbre.left != None:
+            parcours(arbre.left,prefixe+'0',code)
+        if arbre.right != None:
+            parcours(arbre.right,prefixe+'1',code)
+
+
+def dict_to_binary(dico):
+    # Tree to dict
+    tree_string = ""
+
+
+    # Dict to binary string
+    for item in dico.items():
+        char = item[0]
+        freq = item[1]
+
+        char_16b = char_to_code_16_bits(char)
+        freq_16b = "0" + bin(freq)[2:]
+
+        padding = "0" if freq_16b[0]=="1" else "1"
+
+        freq_16b = string_bin_to_16_bits(freq_16b,padding)
+
+        tree_string+=char_16b+freq_16b
+    
+    # Length
+    length = len(tree_string)
+    bin_length = string_bin_to_16_bits("0"+str(bin(length))[2:])
+
+    return bin_length+tree_string
+
+def decode_tree(string):
+    # first 16 bits = length
+    length = int(string[:16],2)
+
+    tree_values = string[16:16+length]
+
+    dico = {}
+
+    for i in range(0,len(tree_values),32):
+        letter = tree_values[i:i+16]
+        code = tree_values[i+16:i+32]
+        letter = code_to_char_16_bits(letter)
+
+        padding = code[0]
+        code = code.lstrip('1') if padding == "1" else code.lstrip('0')
+        dico[letter] = int(code,2)
+
+    return dico, string[length+16:]
+
 
 
 def compress(s):
@@ -128,30 +180,32 @@ def compress(s):
 
     d = duffman(q)
 
-    r,tree = record(d)
+    # Binary dict
+    d_b = dict_to_binary(c)
 
-    #encoded tree
-    te = treeEncoding(tree)
+    r = record(d)
 
     e = encode(r, s)
 
-    return e
+    return d_b+e
 
-
-def size_compare(string):
+def decompress(s):
+    c,s = decode_tree(s)
     
-    compressed = compress(string)
+    q = queue(c)
 
-    b_string = string_to_binary(string)
+    d = duffman(q)
 
-    print(f"Normal size : {len(b_string)}")
-    print(f"Compressed size : {len(compressed)}")
+    return decode(d,s)
 
-    return "prout"
+
 
 if __name__ == '__main__':
 
-    s = "Goulven c'est un connard"
+    s = "Goulven c'est un gros connard"
+
+    s = open('leHorla.txt','r', encoding="utf-8").read()
 
     compressed = compress(s)
-    print(compressed)
+    decompressed = decompress(compressed)
+    print(decompressed)

@@ -69,17 +69,8 @@ def huffman(queue):
 
     return queue
 
+
 # =============== Encoding / Decoding ===============
-
-def string_to_binary(string):
-
-    byte_list = []
-
-    for c in bytearray(string, "utf8"):
-        byte_list.append(bin(c)[2:])
-
-    return "".join(byte_list)
-
 
 def encode(table, string):
     
@@ -170,3 +161,32 @@ def read_bits_from_file(file):
 
 def is_compressed_smaller(string):
     pass
+
+# =============== String / Binary ===============
+
+def string_bin_to_16_bits(string, padding="0"):
+    while len(string) < 16:
+        string = padding + string
+    return string
+
+def string_to_binary(string):
+
+    byte_list = []
+
+    for c in bytearray(string, "utf8"):
+        byte_list.append(bin(c)[2:])
+
+    return "".join(byte_list)
+
+def char_to_code_16_bits(char, padding="0"):
+    code = '0' + bin(ord(char))[2:]
+
+    while len(code) < 16:
+        code = padding + code
+    return code
+
+def code_to_char_16_bits(code):
+    """
+    Convert a code to its char
+    """
+    return chr(int(code,2))
