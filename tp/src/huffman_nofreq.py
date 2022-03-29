@@ -6,6 +6,7 @@
 from collections import Counter
 from heapq import heapify, heappop, heappush
 from huffman_utils import string_to_binary, write_bits_to_file, read_bits_from_file
+import pickle
 
 class Node:
     def __init__(self, frequence, char=None, left=None, right=None):
@@ -73,17 +74,18 @@ def duffman(queue):
         heappush(queue, n)
 
 
-    return queue
+    return queue[0]
 
 
 # Record
 def record(queue):
-    root = queue[0]
+    root = queue
     encoding = {}
+
     for sym, code in root.encode(''):
         encoding[sym]=code
 
-    return encoding
+    return encoding,root
 
 
 def encode(encoding, s):
@@ -93,6 +95,7 @@ def encode(encoding, s):
         if not _ in encoding:
             raise ValueError("'" + _ + "' is not encoded character")
         bits += encoding[_]
+    
     return bits
 
 
@@ -110,6 +113,13 @@ def decode(root, bits):
             node = root
     return s
 
+def treeEncoding(tree):
+    db={}
+    db['tree']=tree
+
+    dump=pickle.dumps(db, -1)
+    print(dump)
+
 
 def compress(s):
     c = count(s)
@@ -118,7 +128,10 @@ def compress(s):
 
     d = duffman(q)
 
-    r = record(d)
+    r,tree = record(d)
+
+    #encoded tree
+    te = treeEncoding(tree)
 
     e = encode(r, s)
 
