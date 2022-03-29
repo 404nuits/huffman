@@ -5,6 +5,8 @@
 
 from heapq import *
 
+from huffman_utils import *
+
 ###  distribution de proba sur les letrres
 
 caracteres = [
@@ -28,172 +30,164 @@ def frequences() :
 
 F = frequences()
 
-###  la classe Arbre
-
-class Arbre:
-    def __init__(self, lettre, gauche=None, droit=None):
-
-        self.gauche=gauche
-        self.droit=droit
-        self.lettre=lettre
-
-    def estFeuille(self):
-
-        return self.gauche == None and self.droit == None
-
-    def estVide(self):
-
-        return self == None
-
-    def __str__(self):
-        return '<'+ str(self.lettre)+'.'+str(self.gauche)+'.'+str(self.droit)+'>'
-
 
 ###  Ex.1  construction de l'arbre d'Huffman utilisant la structure de "tas binaire"
 def arbre_huffman(frequences):
-    
-    # 1
-    tas = [(item[1],) + (item[0],) + (Arbre(item[0]),) for item in frequences.items()]
+    """Generate huffman tree with a Node for NYT chars
 
-    # Ajout du NYT au tas avec une proba de 0, pour qu'il soit au plus bas dans l'arbre, et que la proba totale reste à 1
-    nyt = (0,'NYT',Arbre('NYT'))
-    tas.append(nyt)
+    Args:
+        frequences (dict): Frequencies dictionary (char -> frequency couples)
 
-    heapify(tas)
+    Returns:
+        Arbre: Huffman tree
+    """
 
+    # Add NYT to frequences with 0
+    frequences['NYT'] = 0
 
-    # 4
-    while len(tas) > 1:
+    queue = get_queue(frequences)
 
-        # 2
-        l1 = heappop(tas)
-        l2 = heappop(tas)
+    tree = huffman_tree(queue)
 
-        # 3
-        proba = l1[0] + l2[0]
-        lettre = l1[1] + l2[1]
-        arbre = Arbre(lettre, l1[2], l2[2])
-
-        n = (proba, lettre, arbre)
-
-        heappush(tas, n)
-        
-    #5
-    return tas[0][2]
+    # Return tree
+    return tree
 
 
 ###  Ex.2  construction du code d'Huffamn
-def parcours(arbre,prefixe,code) :
-
-    if (arbre.estFeuille()):
-        code[arbre.lettre] = prefixe
-    else:
-        if arbre.gauche != None:
-            parcours(arbre.gauche,prefixe+'0',code)
-        if arbre.droit != None:
-            parcours(arbre.droit,prefixe+'1',code)
-
-
-def code_huffman(arbre) :
-    # on remplit le dictionnaire du code d'Huffman en parcourant l'arbre
-    code = {}
-    parcours(arbre,'',code)
-    return code
+# Cf. huffman_utils.huffman_code
 
 ###  Ex.3  encodage d'un texte contenu dans un fichier
-def char_to_code_16_bits(char):
-    """
-    Convert a char to its utf-8 code, on 16 bits
-    """
-    code = '0' + bin(ord(char))[2:]
-    while len(code) < 16:
-        code = '0' + code
-    return code
+def encode(dico,file) :
+    """Encode file using huffman dict, hadling NYT chars
 
-def code_to_char_16_bits(code):
-    """
-    Convert a code to its char
-    """
-    return chr(int(code,2))
+    Args:
+        dico (dict): Huffman dict (char -> path code couples)
+        file (str): Filename
 
-def to_binary(dico,fichier) :
+    Returns:
+        str: Binary string of encoded data
+    """
+
     encoded = ''
-    with open(fichier,'r', encoding="utf-8") as file:
+
+    # Read data from input file
+    with open(file,'r', encoding="utf-8") as file:
+
         texte = file.read()
+
+        # Replace each char by its path code 
         for char in texte:
+
             if char in dico:
                 encoded += dico[char]
+
             else:
+                # If the char is NYT, replace by path to NYT Node, then by its charcode on 16 bits
                 encoded += dico['NYT'] + char_to_code_16_bits(char)
+
     return encoded
 
-def encodage(dico, fichier):
-    bin_string = to_binary(dico, fichier)
-    i = 0
-    buffer = bytearray()
-    while i < len(bin_string):
-        buffer.append(int(bin_string[i:i+8], 2))
-        i += 8
+def encode_to_file(dico, file):
+    """Encode data from file to binary file using huffman
 
-    fichier_encoded = "leHorlaEncoded.txt"
+    Args:
+        dico (dict): Huffman dict (char -> path code couples)
+        file (str): Input filename with data to encode
+    """
 
-    with open(fichier_encoded, 'bw') as f:
-        f.write(buffer)
+    bin_string = encode(dico, file)
 
-###  Ex.4  décodage d'un fichier compresse
-def to_bin_string(fichierCompresse) :
+    # New filename = old filename basename + Encoded.bin
+    file_encoded = file.rsplit('.',1)[0] + "Encoded.bin"
 
-    bin_string = ""
+    write_bits_to_file(file_encoded, bin_string)
 
-    with open(fichierCompresse,'rb') as f:
-        bytes = f.read()
-    
-    for bit in bytes:
-        bit = str(bin(bit)[2:])
+###  Ex.4  décodage d'un fichier compressé
 
-        # Add padding bits
-        while len(bit) < 8:
-            bit = "0" + bit
+def decode(tree, bin_file):
+    """Decode a binary file encoded with huffman algorithm
 
-        bin_string += bit
+    Args:
+        tree (Arbre): Root of huffman tree
+        bin_file (str): Input filename of binary data
 
-    return bin_string
+    Returns:
+        str: Decoded text
+    """
 
+    # Get bin string of encoded data
+    bin_string = read_bits_from_file(bin_file)
 
-def decodage(arbre, fichierCompresse):
-    bin_string = to_bin_string(fichierCompresse)
     decoded = ''
-    root = arbre
+    
+    root = tree
 
     # Create an iterator to skip values whenever we want (useful for NYT handling)
     iter_string = iter(range(len(bin_string)))
 
     for i in iter_string:
+
         bit = bin_string[i]
+        
         if bit == '1':
-            arbre = arbre.droit
+            tree = tree.droit
+        
         elif bit == '0':
-            arbre = arbre.gauche
+            tree = tree.gauche
+        
         if arbre.estFeuille():
+            
             if arbre.lettre == 'NYT':
 
+                # If current char is NYT, that means that the next 16 bits are the charcode
                 char_code = bin_string[i:i+17]
 
+                # Decode char code
                 char = code_to_char_16_bits(char_code)
+
                 decoded += char
+
+                # Skip next 16 bits
                 [next(iter_string) for _ in range(16)]
 
             else:
                 decoded += arbre.lettre
+
             arbre = root
 
     return decoded
 
+def compress_to_file(tree, file):
+    """Directly compress data from file to file using huffman algorithm
+
+    Args:
+        tree (Arbre): Huffman tree
+        file (str): Input filename (containing clear data to encode)
+    """
+
+    code_huffman = huffman_code(tree)
+
+    encode_to_file(code_huffman, file)
+
+
+def decompress_from_file(tree, file):
+    """Decompress huffman encoded data from binary file 
+
+    Args:
+        tree (Arbre): Huffman tree
+        file (str): Filename of encoded data (binary file)
+
+    Returns:
+        str: Decoded data
+    """
+    return decode(tree, file)
+
 if __name__ == "__main__":
-    H = arbre_huffman(F)
-    dico = code_huffman(H)
 
-    encodage(dico,'leHorla.txt')
+    tree = arbre_huffman(F)
 
-    decode = decodage(H,'leHorlaEncoded.txt')
-    print(decode)
+    compress_to_file(tree, 'leHorla.txt')
+
+    decoded = decompress_from_file(tree, 'leHorlaEncoded.bin')
+
+    print(decoded)
