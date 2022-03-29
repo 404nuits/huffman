@@ -1,5 +1,17 @@
-- unittest
-- Remettre tout la V1 dans le meme fichier parce que c'est mieux
-    - Nope en fait si possible faire un code réutilisable
+- unittest -> Goulven
+- Utils -> Ewen
 - Rapport
-- changer l'utilisation de la fonction counter par l'utilisation de boucles for (no_freq)
+
+Tests à faire :
+- Comparer la taille
+    - Petit fichier
+    - Moyen fichier
+    - Gros fichier
+    - Le Horla
+    - Large charset avec bcp de char différents
+
+- Assert Equal
+
+- Assert UTF8 char pris en compte
+
+- Assert NYT
