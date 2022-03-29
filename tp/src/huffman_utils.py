@@ -4,7 +4,6 @@
 
 from heapq import heapify, heappop, heappush
 
-
 class Arbre:
     def __init__(self, lettre, frequence, gauche=None, droit=None):
 

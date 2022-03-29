@@ -1,5 +1,4 @@
 - unittest -> Goulven
-- Utils -> Ewen
 - Rapport
 
 Tests à faire :

@@ -4,7 +4,6 @@
 #####################################################
 
 from heapq import *
-
 from huffman_utils import *
 
 ###  distribution de proba sur les letrres

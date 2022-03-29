@@ -6,6 +6,7 @@
 from heapq import heapify, heappop, heappush
 from huffman_utils import *
 
+
 def count(string):
     """generate a frequency dict for each char in the passed string
 
