@@ -201,9 +201,7 @@ def decompress(s):
 
 
 if __name__ == '__main__':
-
-    s = "Goulven c'est un gros connard"
-
+    
     s = open('leHorla.txt','r', encoding="utf-8").read()
 
     compressed = compress(s)
