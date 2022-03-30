@@ -122,7 +122,7 @@ def write_bits_to_file(file, bin_string):
     i = 0
 
     # Calculate how many bits will be added when writing to byte array, to remove them while decoding
-    noise_bits = 8 - (len(bin_string) % 8)
+    noise_bits = (8 - (len(bin_string) % 8)) % 8
 
     # Convert to binary and removing the "b" char
     noise_bits = "0" + bin(noise_bits)[2:]
