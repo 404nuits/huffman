@@ -134,9 +134,9 @@ def decode(tree, bin_file):
         elif bit == '0':
             tree = tree.gauche
         
-        if arbre.estFeuille():
+        if tree.estFeuille():
             
-            if arbre.lettre == 'NYT':
+            if tree.lettre == 'NYT':
 
                 # If current char is NYT, that means that the next 16 bits are the charcode
                 char_code = bin_string[i:i+17]
@@ -150,9 +150,9 @@ def decode(tree, bin_file):
                 [next(iter_string) for _ in range(16)]
 
             else:
-                decoded += arbre.lettre
+                decoded += tree.lettre
 
-            arbre = root
+            tree = root
 
     return decoded
 

@@ -85,10 +85,6 @@ def dict_to_binary(freq_dict):
         - The serialized dict (in binary string)
             - Each char is encoded on 16 bits
             - Each frequency is encoded on 16 bits
-
-        Each time, on those 16 bits, there is at least one padding bit, which is the opposite bit of the first bit of the encoded value
-        For example, if a value has 0100 as its encoded form, padding will be made of ones, because the first bit is 0,
-        So the final bit will be 1111111111110100.
     
     Args:
         dico (dict): Frequencies dictionary, it must only contains char -> frequency (int) couples.
@@ -111,11 +107,7 @@ def dict_to_binary(freq_dict):
         # Get frequency binary representation (removing the 'b' char coming with the bin() function)
         freq_16b = "0" + bin(freq)[2:]
 
-        # Choosing padding based on first bit (padding is its opposite)
-        padding = "0" if freq_16b[0]=="1" else "1"
-
-        # Encode frequency on 16 bits, with opposite padding
-        freq_16b = string_bin_to_16_bits(freq_16b,padding)
+        freq_16b = string_bin_to_16_bits(freq_16b)
 
         tree_string += char_16b + freq_16b
     
@@ -153,12 +145,6 @@ def decode_freq(string):
 
         # Decoding letter
         letter = code_to_char_16_bits(letter)
-
-        # Retrieving padding bit
-        padding = code[0]
-
-        # Removing padding bits (which are the opposite of the first bit value)
-        code = code.lstrip('1') if padding == "1" else code.lstrip('0')
 
         # Constructing the couple in the dict
         dico[letter] = int(code,2)
