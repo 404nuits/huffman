@@ -27,7 +27,7 @@ def compareSize(filename,filename_encoded):
     compression_rate = int(((size_initial-size_compressed)/size_initial)*100)
     print("Le fichier initial (",filename,") a une taille de : ",size_initial,"octets")
     print("Le fichier compressé a une taille de : ",size_compressed,"octets")
-    print("Le taux de compression est de :",compression_rate)
+    print("Le taux de compression est de :",compression_rate,'%')
     print("\n")
 
 #
@@ -91,40 +91,44 @@ def test_huffman_no_freq_all(files):
 
 if __name__ == '__main__':
 
-    # TESTS to compare size files with huffman_nofreq
-    createFileEncoded_nofreq("littleFile.txt","littleFileEncodedNofreq.bin")
-    createFileEncoded_nofreq("bigFile.txt","bigFileEncodedNoFreq.bin")
-    createFileEncoded_nofreq("leHorla.txt","leHorlaEncodedNoFreq.bin")
+    # name of files to test (without extension, they must be .txt)
+    files = [
+        '../data/bigFile',
+        '../data/littleFile',
+        '../data/leHorla'
+    ]
+    
+
+    # ========= Size Comparison =========
+
+    # ----- Huffman No Frequency -----
+
+    # TESTS to compare size files with huffman_nofreq.py
+    for file in files:
+        createFileEncoded_nofreq(file+".txt",file+"EncodedNoFreq.bin")
+
 
     print("Comparaison des tailles de fichiers avec l'utilisation de l'algorithme d'huffman sans fréquence :")
-    compareSize("littleFile.txt","littleFileEncodedNoFreq.bin")
-    compareSize("bigFile.txt","bigFileEncodedNoFreq.bin")
-    compareSize("leHorla.txt","leHorlaEncodedNoFreq.bin")
+    for file in files:
+        compareSize(file+".txt",file+"EncodedNoFreq.bin")
 
-    # TESTS to compare size files with huffman
-    createFileEncoded("littleFile.txt")
-    createFileEncoded("bigFile.txt")
-    createFileEncoded("leHorla.txt")
+
+    # ----- Huffman with frequencies -----
+
+    # TESTS to compare size files with huffman.py
+    for file in files:
+        createFileEncoded(file+".txt")
     
     print("Comparaison des tailles de fichiers avec l'utilisation de l'algorithme d'huffman avec fréquence :")
-    compareSize("littleFile.txt","littleFileEncoded.bin")
-    compareSize("bigFile.txt","bigFileEncoded.bin")
-    compareSize("leHorla.txt","leHorlaEncoded.bin")
+    for file in files:
+        compareSize(file+".txt",file+"Encoded.bin")
 
+
+    # ========= Content Comparison =========
 
     # TESTS to compare the content of files
-
-    files = [
-        'bigFile',
-        'littleFile',
-        'leHorla'
-    ]
 
     print("Vérification de l'équivalence entre le contenu du fichier initial et le contenu décodé du fichier encodé avec l'algorithme d'huffman")
     test_huffman_freq_all(files)
     print("Vérification de l'équivalence entre le contenu du fichier initial et le contenu décodé du fichier encodé avec l'algorithme d'huffman sans fréquence")
     test_huffman_no_freq_all(files)
-    
-
-    
-
