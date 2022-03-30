@@ -227,10 +227,21 @@ def decompress_to_file(s,file):
     with open(file, 'w', encoding="utf-8") as f:
         f.write(decoded)
 
-if __name__ == '__main__':
-    
-    with open('leHorla.txt','r', encoding="utf-8") as f:
-        clear = f.read()
-    compressed = compress(clear)
-    decompressed = decompress(compressed)
+def decompress_from_file(bin_file):
+    bin_string = read_bits_from_file(bin_file)
+    return decompress(bin_string)
 
+def decompress_from_to_file(input,output):
+    decoded = decompress_from_file(input)
+    with open(output, 'w', encoding="utf-8") as f:
+        f.write(decoded)
+
+if __name__ == '__main__':
+
+    basename = "bigFile"
+    
+    with open(basename+".txt",'r', encoding="utf-8") as f:
+        clear = f.read()
+
+    compress_to_file(clear, basename+"Encoded.bin")
+    decompress_from_to_file(basename+"Encoded.bin", basename+"Decoded.txt")

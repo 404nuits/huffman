@@ -74,6 +74,8 @@ def encode(dico,file) :
 
         texte = file.read()
 
+        i = 0
+
         # Replace each char by its path code 
         for char in texte:
 
@@ -83,6 +85,8 @@ def encode(dico,file) :
             else:
                 # If the char is NYT, replace by path to NYT Node, then by its charcode on 16 bits
                 encoded += dico['NYT'] + char_to_code_16_bits(char)
+
+            i+=1
 
     return encoded
 
@@ -189,5 +193,5 @@ if __name__ == "__main__":
 
     decoded = decompress_from_file(tree, 'bigFileEncoded.bin')
 
-    print(decoded)
-    
+    with open('bigFileDecoded.txt','w', encoding="utf-8") as f:
+        f.write(decoded)

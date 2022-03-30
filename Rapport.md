@@ -31,6 +31,12 @@ Ces ajouts sont utiles notamment pour indiquer à heapq sur quoi effectuer la co
 ### Méthode de prise en charge du binaire
 Pour travailler avec des bits, afin de simplifier le code et la compréhension, nous travaillions avec une chaîne de caractères, composée de 0 et de 1, qui représentait notre code binaire, et ce n'est qu'au  moment de l'écriture ou de la lecture depuis fichier binaire que nous convertissions cette chaine en liste d'octets (bytearray), afin d'écriture/lire en binaire.
 
+Cependant, la chaine obtenue n'était pas toujours un multiple de 8, or, Python écrit et lit du binaire depuis un fichier octet par octet, cela résultait donc en des bits de padding ajoutés automatiquement à la fin, faussant le décodage de la fin du fichier.
+
+Pour régler ce problème, nous avons ajouté, juste avant l'écriture dans un fichier, le nombre de bits qui seront ajoutés automatiquement pour compléter un octet. Ce nombre sera stocké sur 8 bits, au tout début du fichier encodé.
+
+Pendant le décodage, après la conversion des données en chaîne représentant du binaire, et avant le décodage, on récupère cette valeur, la converti en entier, et on retire les bits en trop, ainsi que les 8 premiers bits de la chaîne, en résulte uniquement les données à décoder.
+
 ## Huffman avec fréquence
 
 ### NYT

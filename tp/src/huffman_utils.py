@@ -121,6 +121,17 @@ def write_bits_to_file(file, bin_string):
 
     i = 0
 
+    # Calculate how many bits will be added when writing to byte array, to remove them while decoding
+    noise_bits = 8 - (len(bin_string) % 8)
+
+    # Convert to binary and removing the "b" char
+    noise_bits = "0" + bin(noise_bits)[2:]
+    
+    # Convert this number to 8 bits (to keep an entire bytearray so the noise_bits value is still true)
+    noise_bits = string_bin_to_n_bits(noise_bits,8)
+
+    bin_string = noise_bits + bin_string
+
     buffer = bytearray()
 
     # Add byte per byte to buffer
@@ -155,22 +166,39 @@ def read_bits_from_file(file):
 
         bin_string += byte
 
+    # Compute noise bits
+    noise_bits = int(bin_string[:8],2)
+
+    # Remove noise bits and their length value from bin string
+    bin_string = bin_string[8:-noise_bits]
+
     return bin_string
 
 # =============== String / Binary ===============
+
+def string_bin_to_n_bits(string,n):
+    """Transform a binary string to a n bits binary string, adding leading padding bits
+
+    Args:
+        string (str): Binary string (only 0 and 1) lower than n bits
+
+    Returns:
+        str: n bits string
+    """
+    while len(string) < n:
+        string = "0" + string
+    return string
 
 def string_bin_to_16_bits(string):
     """Transform a binary string to a 16 bits binary string, adding leading padding bits
 
     Args:
-        string (str): Binary string (only 0 and 1) lower than 16 bits (at max 15 bits)
+        string (str): Binary string (only 0 and 1) lower than 16 bits
 
     Returns:
         str: 16 bits string
     """
-    while len(string) < 16:
-        string = "0" + string
-    return string
+    return string_bin_to_n_bits(string, 16)
 
 def char_to_code_16_bits(char):
     """Convert an UTF-8 char to a 16 bits binary string, with leading padding
