@@ -189,9 +189,9 @@ if __name__ == "__main__":
 
     tree = arbre_huffman(F)
 
-    compress_to_file(tree, 'bigFile.txt')
+    compress_to_file(tree, 'leHorla.txt')
 
-    decoded = decompress_from_file(tree, 'bigFileEncoded.bin')
+    decoded = decompress_from_file(tree, 'leHorlaEncoded.bin')
 
-    with open('bigFileDecoded.txt','w', encoding="utf-8") as f:
+    with open('leHorlaDecoded.txt','w', encoding="utf-8") as f:
         f.write(decoded)

@@ -1,13 +1,10 @@
 # RAPPORT TP Python 2 - Codes de Huffman
 
-## Consignes
-- Huffman avec fréquence (huffman.py)
-- CM -> Huffman sans fréquence (lit une source et on produit un arbre)
-
-## A rendre
-Un zip avec :
-- Un dossier src qui contient les fichiers sources pour les 2 (ou 3) représentations d'huffman 
-- Un rapport.pdf (avec noms / prénoms)
+## Structure du projet
+- L'implémentation d'Huffman sans fréquence se situe dans le fichier huffman_nofreq.py
+- L'implémentation d'Huffman avec fréquence se situe dans le fichier huffman.py
+- Les fonctions / classes communes aux deux implémentations / génériques se situent dans le fichier huffman_utils.py
+- Les tests se situent dans le fichier tests.py
 
 ## Organisation
 
