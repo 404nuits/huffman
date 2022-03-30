@@ -228,13 +228,15 @@ def decompress_to_file(s,file):
         f.write(decoded)
 
 def decompress_from_file(bin_file):
+    """Decompress compressed data from a binary file
+
+    Args:
+        bin_file: filename of the compressed data file (which is filled by binary string, with only 0 and 1)
+    Returns:
+        str: Decoded data    
+    """
     bin_string = read_bits_from_file(bin_file)
     return decompress(bin_string)
-
-def decompress_from_to_file(input,output):
-    decoded = decompress_from_file(input)
-    with open(output, 'w', encoding="utf-8") as f:
-        f.write(decoded)
 
 if __name__ == '__main__':
 
@@ -244,4 +246,5 @@ if __name__ == '__main__':
         clear = f.read()
 
     compress_to_file(clear, basename+"EncodedNoFreq.bin")
-    decompress_from_to_file(basename+"EncodedNoFreq.bin", basename+"DecodedNoFreq.txt")
+    decompress_from_file(basename+"EncodedNoFreq.bin")
+    

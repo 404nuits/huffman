@@ -118,7 +118,7 @@ Afin de vérifier que les algorithmes d'huffman que nous avons employés fonctio
 1. Taux de compression selon différentes tailles de fichiers.
     - Taux avec l'algorithme d'huffman sans fréquence.
     - Taux avec l'algorithme d'huffman avec fréquences.
-1. Comparaison des textes des fichiers initiaux avec les textes décodés des fichiers encodés.
+2. Vérification de l'équivalence entre le contenu du fichier initial et le contenu décodé du fichier encodé avec chaque algorithme.
 
 ### 1. Taux de compression selon différentes tailles de fichiers
 
@@ -160,5 +160,31 @@ Afin de réaliser cette partie, nous avons créé les fichiers encodés à parti
         Le taux de compression est de : 19%.
 
 
-### 2. Comparaison des textes des fichiers initiaux avec les textes décodés des fichiers encodés
+### 2. Vérification de l'équivalence entre le contenu du fichier initial et le contenu décodé du fichier encodé avec chaque algorithme
+
+Pour chaque fichier, on va aller décompresser le fichier encodé (nameEncoded.bin) et récupérer le contenu ainsi décodé. On va comparer ce dernier avec le texte clair initial pour vérifier que les deux sont bien égaux.
+
+- Vérification avec l'algorithme d'huffman sans fréquence
+
+    1. Test avec le fichier *bigFile* :  
+    Le contenu du fichier encodé (une fois décodé) est bien le même que celui du fichier clair.
+
+    2. Test avec le fichier *littleFile* :  
+    Le contenu du fichier encodé (une fois décodé) est bien le même que celui du fichier clair.
+
+    3. Test avec le fichier témoin *leHorla* :  
+    Le contenu du fichier encodé (une fois décodé) est bien le même que celui du fichier clair.
+
+- Vérification avec l'algorithme d'huffman avec fréquences
+
+    1. Test avec le fichier *bigFile* :  
+    Le contenu du fichier encodé (une fois décodé) est bien le même que celui du fichier clair.
+
+    2. Test avec le fichier *littleFile* :  
+    Le contenu du fichier encodé (une fois décodé) est bien le même que celui du fichier clair.
+
+    3. Test avec le fichier témoin *leHorla* :  
+    Le contenu du fichier encodé (une fois décodé) est bien le même que celui du fichier clair.
+
+
 
