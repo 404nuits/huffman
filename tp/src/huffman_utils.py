@@ -136,7 +136,16 @@ def write_bits_to_file(file, bin_string):
 
     # Add byte per byte to buffer
     while i < len(bin_string):
-        buffer.append(int(bin_string[i:i+8], 2))
+
+        byte = bin_string[i:i+8]
+
+        # Add trailing padding to last byte if necessary
+        while len(byte) < 8:
+            byte += "0"
+
+        byte = int(byte,2)
+
+        buffer.append(byte)
         i += 8
 
     with open(file, 'bw') as f:
@@ -170,8 +179,7 @@ def read_bits_from_file(file):
     noise_bits = int(bin_string[:8],2)
 
     # Remove noise bits and their length value from bin string
-    bin_string = bin_string[8:-noise_bits]
-
+    bin_string = bin_string[8:-noise_bits] if noise_bits != 0 else bin_string[8:]
     return bin_string
 
 # =============== String / Binary ===============
@@ -186,7 +194,7 @@ def string_bin_to_n_bits(string,n):
         str: n bits string
     """
     while len(string) < n:
-        string = "0" + string
+            string = "0" + string
     return string
 
 def string_bin_to_16_bits(string):
