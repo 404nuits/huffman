@@ -2,6 +2,7 @@
 import huffman_nofreq
 import huffman
 import os
+import huffman_tests
 
 def createFileEncoded_nofreq(filename,filename_encoded):
     
@@ -32,14 +33,14 @@ def compareSize(filename,filename_encoded):
 
 if __name__ == '__main__':
 
-    createFileEncoded_nofreq("littleFile.txt","littleFileEncoded.bin")
-    createFileEncoded_nofreq("bigFile.txt","bigFileEncoded.bin")
-    createFileEncoded_nofreq("leHorla.txt","leHorlaEncoded.bin")
+    createFileEncoded_nofreq("littleFile.txt","littleFileEncodedNofreq.bin")
+    createFileEncoded_nofreq("bigFile.txt","bigFileEncodedNoFreq.bin")
+    createFileEncoded_nofreq("leHorla.txt","leHorlaEncodedNoFreq.bin")
 
     print("Comparaison des tailles de fichiers avec l'utilisation de l'algorithme d'huffman sans fréquence :")
-    compareSize("littleFile.txt","littleFileEncoded.bin")
-    compareSize("bigFile.txt","bigFileEncoded.bin")
-    compareSize("leHorla.txt","leHorlaEncoded.bin")
+    compareSize("littleFile.txt","littleFileEncodedNoFreq.bin")
+    compareSize("bigFile.txt","bigFileEncodedNoFreq.bin")
+    compareSize("leHorla.txt","leHorlaEncodedNoFreq.bin")
 
 
     createFileEncoded("littleFile.txt")
@@ -50,6 +51,8 @@ if __name__ == '__main__':
     compareSize("littleFile.txt","littleFileEncoded.bin")
     compareSize("bigFile.txt","bigFileEncoded.bin")
     compareSize("leHorla.txt","leHorlaEncoded.bin")
+
+    #huffman_tests.unittest.main()
 
     
 

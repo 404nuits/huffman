@@ -238,10 +238,10 @@ def decompress_from_to_file(input,output):
 
 if __name__ == '__main__':
 
-    basename = "bigFile"
+    basename = "littleFile"
     
     with open(basename+".txt",'r', encoding="utf-8") as f:
         clear = f.read()
 
-    compress_to_file(clear, basename+"Encoded.bin")
-    decompress_from_to_file(basename+"Encoded.bin", basename+"Decoded.txt")
+    compress_to_file(clear, basename+"EncodedNoFreq.bin")
+    decompress_from_to_file(basename+"EncodedNoFreq.bin", basename+"DecodedNoFreq.txt")

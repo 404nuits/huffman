@@ -116,3 +116,52 @@ Dans notre implémentation, nous avons eu plusieurs choix à faire :
         Reste ensuite à déterminer le signal d'arrêt de lecture du dictionnaire, marquant la limite entre le dictionnaire et les données encodées. Pour cela, nous avons réservé les premiers 16 bits du fichier à la valeur de la taille du dictionnaire sérialisé. Ainsi, une fois la taille atteinte, on saura que les données lues appartiennent au message encodé et non au dictionnaire sérialisé.
 
 ## Méthode de test unitaire
+
+Afin de vérifier que les algorithmes d'huffman que nous avons employés fonctionnent correctement, nous avons réalisé dans le fichier *tests.py* une batterie de tests :
+1. Taux de compression selon différentes tailles de fichiers.
+    - Taux avec l'algorithme d'huffman sans fréquence.
+    - Taux avec l'algorithme d'huffman avec fréquences.
+1. Comparaison des textes des fichiers initiaux avec les textes décodés des fichiers encodés.
+
+### 1. Taux de compression selon différentes tailles de fichiers
+
+Afin de réaliser cette partie, nous avons créé les fichiers encodés à partir des fichiers initiaux. Ensuite, on compare la taille du fichier initial avec celle du fichier compilé et on calcule le taux de compression. Voici nos résultats
+
+- Taux avec l'algorithme d'huffman sans fréquence
+
+    1. Pour un fichier de très petite taille, la compression n'est pas efficace, en effet, devoir enregistrer l'arbre et les données encodées n'est pas optimal et fait même perdre de la place comme on le voit avec le résultat ci-dessous :  
+        - Le fichier initial ( littleFile.txt ) a une taille de :  3 octets.  
+        Le fichier compressé a une taille de :  16 octets.  
+        Le taux de compression est de : -433%.
+
+
+    2. Pour un fichier de très grosse taille, la compression est très efficace, en effet, comme on le voit avec le résultat ci-dessous, on obtient un taux de compression de 46%. :  
+        - Le fichier initial ( bigFile.txt ) a une taille de :  59812 octets.  
+        Le fichier compressé a une taille de :  32273 octets.  
+        Le taux de compression est de : 46%.
+
+    3. Pour le fichier témoin *leHorla.txt*, on obtient un bon taux de compression (19%) :  
+        - Le fichier initial ( leHorla.txt ) a une taille de :  571 octets.  
+        Le fichier compressé a une taille de :  460 octets.  
+        Le taux de compression est de : 19%.
+
+- Taux avec l'algorithme d'huffman avec fréquences
+
+    1. Pour un fichier de très petite taille, la compression n'a pas d'effet. On garde la même taille de fichier. Le taux de compression l'illustre bien en étant à 0% :  
+        - Le fichier initial ( littleFile.txt ) a une taille de :  3 octets.  
+        Le fichier compressé a une taille de :  3 octets.  
+        Le taux de compression est de : 0%.  
+
+    2. Pour un fichier de grosse taille, la compression est efficace avec un taux de compression s'élevant à 32% :  
+        - Le fichier initial ( bigFile.txt ) a une taille de :  59812 octets.  
+        Le fichier compressé a une taille de :  40312 octets.  
+        Le taux de compression est de : 32%.
+
+    3. Pour le fichier témoin *leHorla.txt*, on  obtient un bon taux de compression qui est de 19% :
+        - Le fichier initial ( leHorla.txt ) a une taille de :  571 octets.  
+        Le fichier compressé a une taille de :  457 octets.  
+        Le taux de compression est de : 19%.
+
+
+### 2. Comparaison des textes des fichiers initiaux avec les textes décodés des fichiers encodés
+
