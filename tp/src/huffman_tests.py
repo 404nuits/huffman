@@ -26,7 +26,7 @@ class TestFileMethods(unittest.TestCase):
 
         with open(filename,'r', encoding="utf-8") as f:
             clear = f.read()
-        self.assertEqual(clear,decoded)
+        self.assertEqual(hash(clear),hash(decoded))
 
     def test_content_leHorla(self):
         filename="leHorla.txt"
