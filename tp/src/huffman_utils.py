@@ -159,26 +159,24 @@ def read_bits_from_file(file):
 
 # =============== String / Binary ===============
 
-def string_bin_to_16_bits(string, padding="0"):
+def string_bin_to_16_bits(string):
     """Transform a binary string to a 16 bits binary string, adding leading padding bits
 
     Args:
         string (str): Binary string (only 0 and 1) lower than 16 bits (at max 15 bits)
-        padding (str, optional): Padding bit char, can be 0 or 1. Defaults to "0".
 
     Returns:
         str: 16 bits string
     """
     while len(string) < 16:
-        string = padding + string
+        string = "0" + string
     return string
 
-def char_to_code_16_bits(char, padding="0"):
-    """Convert an UTF-8 char to a 16 bits binary string, with selected leading padding
+def char_to_code_16_bits(char):
+    """Convert an UTF-8 char to a 16 bits binary string, with leading padding
 
     Args:
         char (str): char from UTF-8 table
-        padding (str, optional): Padding bit char, can be 0 or 1. Defaults to "0".
 
     Returns:
         str: 16 bits binary string
@@ -186,7 +184,7 @@ def char_to_code_16_bits(char, padding="0"):
     code = '0' + bin(ord(char))[2:]
 
     while len(code) < 16:
-        code = padding + code
+        code = "0" + code
     return code
 
 def code_to_char_16_bits(code):
